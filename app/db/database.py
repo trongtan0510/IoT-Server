@@ -17,7 +17,7 @@ class DB_CONNECT:
     async def save_user_info (self, name, email, password):
         """Hàm lưu thông tin người dùng vào MongoDB, kiểm tra email đã tồn tại chưa."""
         try:
-            existing_user = await self.users_collection.find_one({"email": email})
+            existing_user = self.users_collection.find_one({"email": email})
             if existing_user:
                 return {"status": "error", "message": "Email này đã được sử dụng."}
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
