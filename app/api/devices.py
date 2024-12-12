@@ -26,6 +26,23 @@ async def send_to_mqtt(request: Request):
         logger.error(f"Lỗi khi xử lý yêu cầu: {e}")
         return {"status": "error", "message": str(e)}
 
+@router.post("/send-status/")
+async def send_to_mqtt(request: Request):
+    try:
+        data = await request.json()
+        
+        if data['message'] == True:
+            message = 'Thủ công'
+        else: 
+            message = 'Tự động'
+        logger.warning(f'{message}')
+        topic = 'project/control'
+        device_service.publish_message(topic, message)
+        return {"status": "success", "message": "Dữ liệu đã được gửi tới MQTT"}
+    except Exception as e:
+        logger.error(f"Lỗi khi xử lý yêu cầu: {e}")
+        return {"status": "error", "message": str(e)}
+    
 @router.post("/create-humidity/")
 async def send_to_mqtt(request: Request):
     try:
