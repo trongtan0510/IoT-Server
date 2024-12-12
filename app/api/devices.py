@@ -32,9 +32,9 @@ async def send_to_mqtt(request: Request):
         data = await request.json()
         
         if data['message'] == True:
-            message = 'Thủ công'
+            message = 'manual'
         else: 
-            message = 'Tự động'
+            message = 'auto'
         logger.warning(f'{message}')
         topic = 'project/control'
         device_service.publish_message(topic, message)
