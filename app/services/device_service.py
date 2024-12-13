@@ -24,7 +24,6 @@ class DeviceService:
         self.mqtt_client.on_message = self.on_message
 
     def on_message(self, client, userdata, msg):
-        """Callback function for handling received MQTT messages"""
         try:
             message = msg.payload.decode()
             asyncio.run_coroutine_threadsafe(self.message_queue.put(message), self.loop)
@@ -32,7 +31,6 @@ class DeviceService:
             logger.error(f"Error in on_message: {e}")
 
     def publish_message(self, topic: str, message: str):
-        """Gửi dữ liệu lên MQTT broker."""
         try:
             self.mqtt_client.publish(topic, message)
             logger.info(f"Gửi dữ liệu: {message} tới topic: {topic}")
@@ -40,7 +38,6 @@ class DeviceService:
             logger.error(f"Lỗi khi gửi dữ liệu tới MQTT: {e}")
 
     def connect_mqtt(self):
-        """Connect to the MQTT broker and start the loop"""
         try:
             self.mqtt_client.connect(self.MQTT_BROKER, self.MQTT_PORT, 60)
             self.mqtt_client.loop_start()
@@ -49,7 +46,6 @@ class DeviceService:
             logger.error(f"MQTT connection error: {e}")
 
     async def event_generator(self):
-        """Asynchronous generator for sending messages to frontend via SSE"""
         while True:
             try:
                 message = await self.message_queue.get()
@@ -61,7 +57,6 @@ class DeviceService:
                 logger.error(f"Error in event_generator: {e}")
 
     def setup_routes(self):
-        """Set up FastAPI routes for SSE"""
         self.connect_mqtt() 
         return EventSourceResponse(self.event_generator())
 
